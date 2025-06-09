@@ -8,9 +8,9 @@ public class Equipo {
     private String tipoEquipo;
     private List<String> preferencias;
     private List<String> integrantes;
-    private List<int> rangoEdad;
+    private List<Integer> rangoEdad;
 
-    public Equipo(int dniCapitan, String nombreEquipo, int numeroIntegrantes, String tipoEquipo, List<String> preferencias, List<String> integrantes, List<int> rangoEdad) {
+    public Equipo(int dniCapitan, String nombreEquipo, int numeroIntegrantes, String tipoEquipo, List<String> preferencias, List<String> integrantes, List<Integer> rangoEdad) {
         this.dniCapitan = dniCapitan;
         this.nombreEquipo = nombreEquipo;
         this.numeroIntegrantes = numeroIntegrantes;
@@ -39,7 +39,7 @@ public class Equipo {
     public void setIntegrantes(List<String> integrantes) {
         this.integrantes = integrantes;
     }
-    public void setRangoEdad(List<int> rangoEdad) {
+    public void setRangoEdad(List<Integer> rangoEdad) {
         this.rangoEdad = rangoEdad;
     }
 
@@ -62,7 +62,7 @@ public class Equipo {
     public List<String> getIntegrantes() {
         return integrantes;
     }
-    public List<int> getRangoEdad() {
+    public List<Integer> getRangoEdad() {
         return rangoEdad;
     }
 }

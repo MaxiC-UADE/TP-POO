@@ -13,7 +13,7 @@ public class PartidoTorneo extends Partido {
     }
 
     // GETS Y SETS
-    public String getResultado() {
+    public int getResultado() {
         return resultado;
     }
     public void setResultado(int resultado) {
