@@ -1,26 +1,26 @@
 public class Administrador {
-    public String emailadmin;
-    public String contraseñaadmin;
+    public String emailAdmin;
+    public String contraseñaAdmin;
 
-    public Administrador(String emailadmin, String contraseñaadmin) {
-        this.emailadmin = emailadmin;
-        this.contraseñaadmin = contraseñaadmin;
+    public Administrador(String emailAdmin, String contraseñaAdmin) {
+        this.emailAdmin = emailAdmin;
+        this.contraseñaAdmin = contraseñaAdmin;
     }
 
     // GETS Y SETS
 
-    public String getEmailadmin() {
-        return emailadmin;
+    public String getEmailAdmin() {
+        return emailAdmin;
     }
-    public void setEmailadmin(String emailadmin) {
-        this.emailadmin = emailadmin;
+    public void setEmailAdmin(String emailAdmin) {
+        this.emailAdmin = emailAdmin;
     }
 
-    public String getContraseñaadmin() {
-        return contraseñaadmin;
+    public String getContraseñaAdmin() {
+        return contraseñaAdmin;
     }
-    public void setContraseñaadmin(String contraseñaadmin) {
-        this.contraseñaadmin = contraseñaadmin;
+    public void setContraseñaAdmin(String contraseñaAdmin) {
+        this.contraseñaAdmin = contraseñaAdmin;
     }
 
     // METODOS
