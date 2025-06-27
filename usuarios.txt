@@ -1,3 +1,5 @@
-emailMaxi;contraseñaMaxi
-emailBeto;contraseñaBeto
-emailGonza;contraseñaGonza
+/// email;PW;Nombre;Apellido;Edad;DNI;Posicion
+gonfox11@gmail.com;gonzalo1234;Gonzalo Lucas;Lane;21;45135748;defensor
+maxikayne@gmail.com;1234;Maximo;Crocce;19;46573918;Delantero
+emailuno@gmail.com;contraseñauno;NombreUno;ApellidoUno;21;12345678;Arquero
+emaildos@gmail.com;contraseñados;NombreDos;ApellidoDos;21;88888888;Delantero

@@ -20,7 +20,7 @@ public class Equipo {
         this.rangoEdad = rangoEdad;
     }
 
-    // SETS
+    /// SETS
     public void setDniCapitan(int dniCapitan) {
         this.dniCapitan = dniCapitan;
     }
