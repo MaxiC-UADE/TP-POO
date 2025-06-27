@@ -1,6 +1,8 @@
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
 
 public class Capitan extends Usuario {
     public Capitan() {
@@ -9,19 +11,23 @@ public class Capitan extends Usuario {
 
     public void crearEquipo() {
         Scanner sc = new Scanner(System.in);
+
+        /// Listas para el min y max de rango de edad y integrantes de cada grupo
+        ArrayList<String> integrantes = new ArrayList<>();
         ArrayList<String> rangoEdad = new ArrayList<>();
 
         sc.nextLine();
 
         System.out.println("Ingresa tu DNI:");
         int dniCapitan = sc.nextInt();
+        integrantes.add(String.valueOf(dniCapitan));
         sc.nextLine();
 
         System.out.println("Ingresa el nombre del equipo:");
         String nombreEquipo = sc.nextLine();
 
 
-        // Selección de formato (F5, F7, F8, F11)
+        /// Selección de formato (F5, F7, F8, F11)
         String numeroIntegrantes;
         while (true) {
             System.out.println("Ingresa la cantidad de integrantes (F5, F7, F8, F11):");
@@ -36,17 +42,38 @@ public class Capitan extends Usuario {
         }
 
         // Extraer número del formato (ej: de "F5" obtener 5)
-        int cantidadEsperada = Integer.parseInt(numeroIntegrantes.substring(1));
+        int cantidadEsperada = Integer.parseInt(numeroIntegrantes.substring(1)) - 1;
 
-        // Validar que la cantidad de integrantes coincida
-        int integrantes;
+        /// Leer DNIS del archivo usuarios
+        Set<String> usuariosRegistrados = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(";");
+
+                if (partes.length >= 6) {
+                    String dniu = partes[5].trim();
+                    usuariosRegistrados.add(dniu); // Guardamos el DNI como
+                } else {
+                    System.out.println("Línea malformada en usuarios.txt: " + linea);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo de usuarios.");
+            e.printStackTrace();
+            return;
+        }
+
+
+        // Pedir la cantidad correcta de integrantes
+        int integrantesIngresados;
         while (true) {
-            System.out.println("Integrantes:");
+            System.out.print("Integrantes: ");
             if (sc.hasNextInt()) {
-                integrantes = sc.nextInt();
-                sc.nextLine();
+                integrantesIngresados = sc.nextInt();
+                sc.nextLine(); // limpiar buffer
 
-                if (integrantes == cantidadEsperada) {
+                if (integrantesIngresados == cantidadEsperada) {
                     break;
                 } else {
                     System.out.println("Debes ingresar exactamente " + cantidadEsperada + " integrantes.");
@@ -57,8 +84,26 @@ public class Capitan extends Usuario {
             }
         }
 
-        System.out.println("Formato elegido: " + numeroIntegrantes);
-        System.out.println("Integrantes ingresados correctamente: " + integrantes);
+        // Pedir los DNI y validarlos contra el archivo
+        for (int i = 0; i < cantidadEsperada; ) {
+            System.out.print("Ingrese el DNI del integrante (Recuerda que tu ya eres uno de ellos.) #" + (i + 1) + ": ");
+            String dni = sc.nextLine().trim();
+
+            if (integrantes.contains(dni)) {
+                System.out.println("Ese DNI ya fue ingresado como integrante. Por favor, ingrese uno diferente.");
+            } else if (usuariosRegistrados.contains(dni)) {
+                integrantes.add(dni);
+                i++; // solo avanzar si es válido y no repetido
+            } else {
+                System.out.println("Lo siento, esa persona no se ha registrado en el sitio aun!");
+            }
+        }
+
+        // Muestra final (opcional)
+        System.out.println("Integrantes registrados correctamente:");
+        for (String dni : integrantes) {
+            System.out.println("- " + dni);
+        }
 
 
         /// Inicio Tipo de equipo
@@ -83,6 +128,8 @@ public class Capitan extends Usuario {
 
         System.out.println("preferencias:");
         String preferencias = sc.nextLine();
+
+
         /// Inicio creado de rango de edad (Minimo y Maximo)
         int edadMin, edadMax;
 
