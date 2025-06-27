@@ -139,9 +139,9 @@ public abstract class Usuario {
             System.out.println("Error al leer el archivo.");
         }
         if (accesoConcedido) {
-            System.out.println("bienvenido");
+            System.out.println("Bienvenido a FutInc");
         } else {
-            System.out.println("acceso denegado");
+            System.out.println("Las credenciales son incorrectas, asegurate de introducir bien tu contraseña");
 
         }
     }

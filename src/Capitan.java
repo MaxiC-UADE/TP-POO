@@ -64,26 +64,6 @@ public class Capitan extends Usuario {
             return;
         }
 
-
-        // Pedir la cantidad correcta de integrantes
-        int integrantesIngresados;
-        while (true) {
-            System.out.print("Integrantes: ");
-            if (sc.hasNextInt()) {
-                integrantesIngresados = sc.nextInt();
-                sc.nextLine(); // limpiar buffer
-
-                if (integrantesIngresados == cantidadEsperada) {
-                    break;
-                } else {
-                    System.out.println("Debes ingresar exactamente " + cantidadEsperada + " integrantes.");
-                }
-            } else {
-                System.out.println("Por favor, ingresa un número válido.");
-                sc.nextLine();
-            }
-        }
-
         // Pedir los DNI y validarlos contra el archivo
         for (int i = 0; i < cantidadEsperada; ) {
             System.out.print("Ingrese el DNI del integrante (Recuerda que tu ya eres uno de ellos.) #" + (i + 1) + ": ");
