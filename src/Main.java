@@ -26,6 +26,10 @@ public class Main {
             jugador.registrar(); /// Llama metodo de usuario y guarda la info en un txt.
 
         }
+
+        Jugador jugador = new Jugador();
+        jugador.elegirRol();
+
         sc.close();
 
     }

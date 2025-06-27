@@ -154,7 +154,8 @@ public abstract class Usuario {
         sc.nextLine();
 
         if (presion1 == 1) {
-
+            Capitan rol = new Capitan();
+            rol.crearEquipo();
         }
         else if(presion1 == 2){
 
