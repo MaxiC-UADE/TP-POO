@@ -68,7 +68,7 @@ public abstract class Usuario {
 
     // METODOS
     public void abandonarEquipo(String nombreEquipo) {
-        
+
     }
 
     public void registrar() {
@@ -111,7 +111,7 @@ public abstract class Usuario {
 
     public void login() {
         Scanner sc = new Scanner(System.in);
-        
+
         System.out.print("Ingrese su email: ");
         String emailIngresado = sc.nextLine();
         System.out.print("Ingrese su password: ");
