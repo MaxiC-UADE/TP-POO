@@ -80,7 +80,7 @@ public class Capitan extends Usuario {
         String preferencias = rangoHorario + "," + zona + "," + dia;
 
 
-        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + preferencias;
+        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + ";" + preferencias + ";" + "Inhabilitado" ;
         try(BufferedWriter writer = new BufferedWriter(new FileWriter("equipos.txt", true))){
             writer.write(nuevaLinea);
             writer.newLine();
@@ -92,7 +92,7 @@ public class Capitan extends Usuario {
 
     }
 
-    public void borrarEquipo(String dniCapitan) {
+    public void borrarEquipo() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el nombre del equipo:");
         String nombreEquipoIngresado = sc.nextLine();
@@ -114,7 +114,7 @@ public class Capitan extends Usuario {
                 String dniCapitanGuardado = partes[0];
                 String nombreEquipoGuardado  = partes[1];
 
-                if (dniCapitan.equals(dniCapitanGuardado) && nombreEquipoIngresado.equals(nombreEquipoGuardado)) {
+                if (this.dni.equals(dniCapitanGuardado) && nombreEquipoIngresado.equals(nombreEquipoGuardado)) {
                     equipoBorrado = true;
                     continue; // saltar esta línea
 

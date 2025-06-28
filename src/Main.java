@@ -75,7 +75,7 @@ public class Main {
                     ((Capitan) persona).crearEquipo();
                 }
                 else if (opcionMenu == 2) {
-                    ((Capitan) persona).borrarEquipo(persona.getDni());
+                    ((Capitan) persona).borrarEquipo();
                 }
                 else if (opcionMenu == 3) {
                     ((Capitan) persona).inscripcion();
