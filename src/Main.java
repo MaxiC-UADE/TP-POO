@@ -60,24 +60,38 @@ public class Main {
         // flujos del programa segun si la persona es capitan o un jugador simple.
         int opcionMenu;
         if (persona instanceof Capitan) {
-            System.out.println("Eres un capitán.");
-            System.out.println("1. Crear equipo.");
-            System.out.println("2. Borrar equipo.");
-            System.out.println("3. Inscribir tu equipo.");
+            while (true) {
+                System.out.println("Eres un capitán.");
+                System.out.println("¿Que desea hacer?");
+                System.out.println("1. Crear equipo.");
+                System.out.println("2. Borrar equipo.");
+                System.out.println("3. Inscribir tu equipo.");
 
-            opcionMenu = sc.nextInt();
-            sc.nextLine();
+                opcionMenu = sc.nextInt();
+                sc.nextLine();
 
+                if (opcionMenu == 1) {
+                    ((Capitan) persona).crearEquipo();
+                    break;
+                } else if (opcionMenu == 2) {
+                    ((Capitan) persona).borrarEquipo(persona.getDni());
+                    break;
+                } else if (opcionMenu == 3) {
+                    ((Capitan) persona).inscripcion();
+                    break;
+                } else {
+                    System.out.println("Opcion invalida. Por favor ingrese una opcion valida.");
+                }
+            }
 
         } else if (persona instanceof Jugador) {
             System.out.println("Eres un jugador.");
-            System.out.println("¿QUE DESEA HACER?");
+            System.out.println("¿Que desea hacer?");
             System.out.println("1. Abandonar equipo.");
             System.out.println("2. Buscar equipo.");
 
             opcionMenu = sc.nextInt();
             sc.nextLine();
-
 
         }
 
