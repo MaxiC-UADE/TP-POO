@@ -144,6 +144,53 @@ public class Capitan extends Usuario {
     }
 
     public void inscripcion() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ingrese el nombre del equipo:");
+        String nombreEquipoIngresado = sc.nextLine();
 
+        String archivo = "equipos.txt";
+
+        try {
+            File inputFile = new File(archivo);
+            File tempFile = new File("temp.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            boolean equipoHabilitado = false;
+
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(";");
+                String dniCapitanGuardado = partes[0];
+                String nombreEquipoGuardado  = partes[1];
+
+                if (this.dni.equals(dniCapitanGuardado) && nombreEquipoIngresado.equals(nombreEquipoGuardado)) {
+                    partes[6] = "Habilitado";
+                    writer.write(String.join(",", partes));
+                    equipoHabilitado = true;
+                    continue; // saltar esta línea
+
+                }
+                writer.write(linea);
+                writer.newLine();
+            }
+
+            writer.close();
+            reader.close();
+
+            if (inputFile.delete()) {
+                tempFile.renameTo(inputFile);
+            }
+            if(equipoHabilitado){
+                System.out.println("¡Enhorabuena! El equipo ya se encuentra habilitado para jugar.");
+            }
+            else{
+                System.out.println(" Accion denegada: desafortunadamente el equipo no existe o no sos el capitan del equipo.");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo original o escribir en el temporal.");
+        }
     }
 }
