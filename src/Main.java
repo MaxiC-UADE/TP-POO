@@ -66,20 +66,24 @@ public class Main {
                 System.out.println("1. Crear equipo.");
                 System.out.println("2. Borrar equipo.");
                 System.out.println("3. Inscribir tu equipo.");
+                System.out.println("4. Salir.");
 
                 opcionMenu = sc.nextInt();
                 sc.nextLine();
 
                 if (opcionMenu == 1) {
                     ((Capitan) persona).crearEquipo();
-                    break;
-                } else if (opcionMenu == 2) {
+                }
+                else if (opcionMenu == 2) {
                     ((Capitan) persona).borrarEquipo(persona.getDni());
-                    break;
-                } else if (opcionMenu == 3) {
+                }
+                else if (opcionMenu == 3) {
                     ((Capitan) persona).inscripcion();
+                }
+                else if (opcionMenu == 4){
                     break;
-                } else {
+                }
+                else {
                     System.out.println("Opcion invalida. Por favor ingrese una opcion valida.");
                 }
             }
@@ -94,7 +98,7 @@ public class Main {
             sc.nextLine();
 
         }
-
+        //sigue aca
 
         sc.close();
 
