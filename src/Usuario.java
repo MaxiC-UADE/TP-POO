@@ -157,22 +157,6 @@ public abstract class Usuario {
 
         }
     }
-
-    public void elegirRol() {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("PRESIONE 1 PARA CREAR UN EQUIPO, O PRESIONE 2 PARA UNIRSE UN EQUIPO:");
-        int presion1 = sc.nextInt();
-        sc.nextLine();
-
-        if (presion1 == 1) {
-            Capitan rol = new Capitan();
-            rol.crearEquipo();
-        }
-        else if(presion1 == 2){
-
-        }
-        sc.close();
-    }
-
 }
+
+

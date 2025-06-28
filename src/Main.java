@@ -26,7 +26,7 @@ public class Main {
         }
 
         // bucle que pregunta al usuario si quiere loguearse o registrarse y actua en consecuencia.
-
+        Usuario persona;
         while(true){
         System.out.println("Ingrese 1 para logearse o 2 para registrarse.");
         int opcionLoginRegistro = sc.nextInt();
@@ -34,20 +34,20 @@ public class Main {
 
         if (opcionLoginRegistro == 1) {
             if (opcionCrearEquipo == 1) {
-                Usuario persona = new Jugador();
+                persona = new Jugador();
                 persona.login();
             }else{
-                Usuario persona = new Capitan();
+                persona = new Capitan();
                 persona.login();
                 }
             break;
 
         } else if(opcionLoginRegistro == 2){
             if (opcionCrearEquipo == 1) {
-                Usuario persona = new Jugador();
+                persona = new Jugador();
                 persona.registrar();
             }else{
-                Usuario persona = new Capitan();
+                persona = new Capitan();
                 persona.registrar();
             }
             break;
@@ -57,9 +57,30 @@ public class Main {
         }
 
         }
+        // flujos del programa segun si la persona es capitan o un jugador simple.
+        int opcionMenu;
+        if (persona instanceof Capitan) {
+            System.out.println("Eres un capitán.");
+            System.out.println("1. Crear equipo.");
+            System.out.println("2. Borrar equipo.");
+            System.out.println("3. Inscribir tu equipo.");
 
-        Jugador jugador = new Jugador();
-        jugador.elegirRol();
+            opcionMenu = sc.nextInt();
+            sc.nextLine();
+
+
+        } else if (persona instanceof Jugador) {
+            System.out.println("Eres un jugador.");
+            System.out.println("¿QUE DESEA HACER?");
+            System.out.println("1. Abandonar equipo.");
+            System.out.println("2. Buscar equipo.");
+
+            opcionMenu = sc.nextInt();
+            sc.nextLine();
+
+
+        }
+
 
         sc.close();
 
