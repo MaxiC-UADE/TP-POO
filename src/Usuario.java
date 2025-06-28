@@ -9,7 +9,7 @@ public abstract class Usuario {
     public String password;
     public String nombre;
     public String apellido;
-    public int dni;
+    public String dni;
     public int edad;
     public String posicion;
 
@@ -42,10 +42,10 @@ public abstract class Usuario {
         this.apellido = apellido;
     }
 
-    public int getDni() {
+    public String getDni() {
         return dni;
     }
-    public void setDni(int dni) {
+    public void setDni(String dni) {
         this.dni = dni;
     }
 
@@ -77,26 +77,32 @@ public abstract class Usuario {
 
         System.out.println("Nombre:");
         String nombre = sc.nextLine();
+        this.nombre = nombre;
 
         System.out.println("Apellido:");
         String apellido = sc.nextLine();
+        this.apellido = apellido;
 
         System.out.println("Edad:");
         int edad = sc.nextInt();
         sc.nextLine();
+        this.edad = edad;
 
         System.out.println("Email:");
         String email = sc.nextLine();
+        this.email = email;
 
         System.out.println("Password:");
         String password = sc.nextLine();
+        this.password = password;
 
         System.out.println("DNI:");
-        int dni = sc.nextInt();
-        sc.nextLine();
+        String dni = sc.nextLine();
+        this.dni = dni;
 
         System.out.println("Posicion:");
         String posicion = sc.nextLine();
+        this.posicion = posicion;
 
         try{
             FileWriter archivo = new FileWriter("usuarios.txt", true);
@@ -128,8 +134,14 @@ public abstract class Usuario {
                 String emailGuardado = partes[0];
                 String passwordGuardado = partes[1];
 
+
                 if (emailIngresado.equals(emailGuardado) && passwordIngresado.equals(passwordGuardado)) {
                     accesoConcedido = true;
+                    this.nombre = partes[2];
+                    this.apellido = partes[3];
+                    this.edad = Integer.parseInt(partes[4]);
+                    this.dni = partes[5];
+                    this.posicion = partes[6];
                     break;
                 }
             }
