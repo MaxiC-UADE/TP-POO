@@ -107,7 +107,10 @@ public class Main {
                     persona.abandonarEquipo(nombreEquipoInput);
                 }
                 else if (opcionMenu == 2) {
-                    ((Capitan) persona).borrarEquipo();
+                    ((Jugador) persona).buscarEquipo();
+                    System.out.println("Ingrese el nombre del equipo al que desea unirse:");
+                    String nombreEquipoInput = sc.nextLine();
+                    ((Jugador) persona).unirseEquipo(nombreEquipoInput);
                 }
                 else if (opcionMenu == 3) {
                     break;
