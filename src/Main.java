@@ -61,13 +61,14 @@ public class Main {
         int opcionMenu;
         if (persona instanceof Capitan) {
             while (true) {
-                System.out.println("Eres un capitán.");
+                System.out.println("Usted es un capitán.");
                 System.out.println("¿Que desea hacer?");
                 System.out.println("1. Crear equipo.");
                 System.out.println("2. Borrar equipo.");
                 System.out.println("3. Inscribir tu equipo.");
                 System.out.println("4. Salir.");
 
+                System.out.println("Opcion:");
                 opcionMenu = sc.nextInt();
                 sc.nextLine();
 
@@ -89,14 +90,32 @@ public class Main {
             }
 
         } else if (persona instanceof Jugador) {
-            System.out.println("Eres un jugador.");
-            System.out.println("¿Que desea hacer?");
-            System.out.println("1. Abandonar equipo.");
-            System.out.println("2. Buscar equipo.");
+            while (true) {
+                System.out.println("Usted es un jugador.");
+                System.out.println("¿Que desea hacer?");
+                System.out.println("1. Abandonar equipo.");
+                System.out.println("2. Buscar equipo.");
+                System.out.println("3. Salir.");
 
-            opcionMenu = sc.nextInt();
-            sc.nextLine();
+                System.out.println("Opcion:");
+                opcionMenu = sc.nextInt();
+                sc.nextLine();
 
+                if (opcionMenu == 1) {
+                    System.out.println("Ingrese el nombre del equipo:");
+                    String nombreEquipoInput = sc.nextLine();
+                    persona.abandonarEquipo(nombreEquipoInput);
+                }
+                else if (opcionMenu == 2) {
+                    ((Capitan) persona).borrarEquipo();
+                }
+                else if (opcionMenu == 3) {
+                    break;
+                }
+                else {
+                    System.out.println("Opcion invalida. Por favor ingrese una opcion valida.");
+                }
+            }
         }
         //sigue aca
 

@@ -1,7 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public abstract class Usuario {
@@ -67,8 +67,55 @@ public abstract class Usuario {
 
 
     // METODOS
-    public void abandonarEquipo(String nombreEquipo) {
+    public void abandonarEquipo(String nombreEquipoInput) {
+        String archivo = "equipos.txt";
 
+        try {
+            File inputFile = new File(archivo);
+            File tempFile = new File("temp.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            boolean integranteRemovido = false;
+
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(";");
+                String nombreEquipoGuardado  = partes[1];
+
+                if (nombreEquipoInput.equals(nombreEquipoGuardado)) {
+                    String[] dnisIntegrantesArray = partes[4].split(",");
+                    List<String> dnisIntegrantesList = new ArrayList<>(Arrays.asList(dnisIntegrantesArray));
+                    dnisIntegrantesList.remove(this.dni);
+                    String dnisActualizados = String.join(",", dnisIntegrantesList);
+                    partes[4] = dnisActualizados;
+                    String nuevaLinea = String.join(";", partes);
+                    writer.write(nuevaLinea);
+                    integranteRemovido = true;
+                    continue; // saltar esta línea
+
+                }
+                writer.write(linea);
+                writer.newLine();
+            }
+
+            writer.close();
+            reader.close();
+
+            if (inputFile.delete()) {
+                tempFile.renameTo(inputFile);
+            }
+            if(integranteRemovido){
+                System.out.println("¡Enhorabuena! fuiste removido del equipo.");
+            }
+            else{
+                System.out.println(" Lamentablemente no pudimos remover tu estadia en el equipo: el equipo no existe o no fromas parte de este.");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo original o escribir en el temporal.");
+        }
     }
 
     public void registrar() {
