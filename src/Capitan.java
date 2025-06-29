@@ -82,7 +82,7 @@ public class Capitan extends Usuario {
         String preferencias = rangoHorario + "," + zona + "," + dia;
 
 
-        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + ";" + preferencias + ";" + "Inhabilitado" + ";" + cantidadIntegrantes ;
+        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + ";" + preferencias + ";" + "Inhabilitado" + ";" + cantidadIntegrantes + "\\n";
         try(BufferedWriter writer = new BufferedWriter(new FileWriter("equipos.txt", true))){
             writer.write(nuevaLinea);
             writer.newLine();

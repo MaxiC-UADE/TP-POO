@@ -12,6 +12,7 @@ public abstract class Usuario {
     public String dni;
     public int edad;
     public String posicion;
+    public String genero;
 
     // gets y sets
     public String getEmail() {
@@ -135,6 +136,26 @@ public abstract class Usuario {
         sc.nextLine();
         this.edad = edad;
 
+        String genero;
+        while (true) {
+            System.out.println("Ingrese 1 para Masculino o 2 para Femenino.");
+            int opcionGenero = sc.nextInt();
+            sc.nextLine();
+
+            if (opcionGenero == 1){
+                genero = "Maculino";
+                break;
+            }
+            else if (opcionGenero == 2){
+                genero = "Femenino";
+                break;
+            }
+            else {
+                System.out.println("Opcion invalida. Por favor ingrese una opcion valida.");
+            }
+        }
+        this.genero = genero;
+
         System.out.println("Email:");
         String email = sc.nextLine();
         this.email = email;
@@ -153,7 +174,7 @@ public abstract class Usuario {
 
         try{
             FileWriter archivo = new FileWriter("usuarios.txt", true);
-            archivo.write(email + ";" + password + ";" + nombre + ";" + apellido + ";" + edad + ";" + dni + ";" + posicion + "\n");
+            archivo.write(email + ";" + password + ";" + nombre + ";" + apellido + ";" + edad + ";" + dni + ";" + posicion + ";" + genero + "\\n");
             archivo.close();
             System.out.println("Usuario guardado");
         } catch (IOException e){
