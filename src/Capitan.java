@@ -42,8 +42,9 @@ public class Capitan extends Usuario {
         String rangoEdad = edadMinima + "," + edadMaxima;
 
         String dnisIntegrantesString = this.dni;
+        String cantidadIntegrantes = "1";
         while (true) {
-            System.out.println("¿Desea completar el equipo? Ingrese 1 para SI o 2 para NO.");
+            System.out.println("¿Desea completar el equipo ahora? Ingrese 1 para SI o 2 para NO.");
             int opcionCompletarEquipo = sc.nextInt();
             sc.nextLine();
 
@@ -59,6 +60,7 @@ public class Capitan extends Usuario {
                     i -= 1;
                 }
                 dnisIntegrantesString = String.join(",", dnisIntegrantesLista);
+                cantidadIntegrantes = "5";
                 System.out.println("Accion exitosa. Cargaste los dnis de los integrantes de tu equipo.");
             } else if (opcionCompletarEquipo == 2) {
                 break;
@@ -80,7 +82,7 @@ public class Capitan extends Usuario {
         String preferencias = rangoHorario + "," + zona + "," + dia;
 
 
-        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + ";" + preferencias + ";" + "Inhabilitado" ;
+        String nuevaLinea = this.dni + ";" + nombreEquipoIngresado + ";" + generoEquipo + ";" + rangoEdad + ";" + dnisIntegrantesString + ";" + preferencias + ";" + "Inhabilitado" + ";" + cantidadIntegrantes ;
         try(BufferedWriter writer = new BufferedWriter(new FileWriter("equipos.txt", true))){
             writer.write(nuevaLinea);
             writer.newLine();
