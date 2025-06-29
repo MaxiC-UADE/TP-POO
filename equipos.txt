@@ -1,0 +1,13 @@
+
+ID: E1
+Nombre del equipo: Boca JRS
+Formato: F5 (5 integrantes)
+Tipo de equipo: Masculino
+Preferencias: No
+Rango de edad: 20-25
+Integrantes:
+  1. DNI: 0 (Capitán)
+  2. DNI: 88888888
+  3. DNI: 46573918
+  4. DNI: 45135748
+--------------------------------------------------

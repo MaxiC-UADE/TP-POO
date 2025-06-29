@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
 public abstract class Usuario {
     public String email;
@@ -67,9 +69,161 @@ public abstract class Usuario {
 
 
     // METODOS
-    public void abandonarEquipo(String nombreEquipo) {
+    public void abandonarEquipo(String emailUsuario) {
+        Scanner sc = new Scanner(System.in);
 
+        /// Paso 1: Buscar DNI en usuarios.txt a partir del email
+        String dniUsuario = null;
+        try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) {
+            String linea;
+            String emailGuardado = "";
+            String dniGuardado = "";
+
+            while ((linea = br.readLine()) != null) {
+                if (linea.startsWith("Email: ")) {
+                    emailGuardado = linea.substring(7).trim();
+                } else if (linea.startsWith("DNI: ")) {
+                    dniGuardado = linea.substring(5).trim();
+                } else if (linea.startsWith("--------------------------------------------------")) {
+                    if (emailUsuario.equals(emailGuardado)) {
+                        dniUsuario = dniGuardado;
+                        break;
+                    }
+                    emailGuardado = "";
+                    dniGuardado = "";
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer usuarios.txt");
+            e.printStackTrace();
+            return;
+        }
+
+        if (dniUsuario == null) {
+            System.out.println("No se encontró un usuario con ese email o no está logueado.");
+            return;
+        }
+
+        /// Paso 2: Buscar equipos donde está el DNI
+        List<String> equipos = new ArrayList<>();
+        List<String> equiposCompletos = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("equipos.txt"))) {
+            String linea;
+            StringBuilder bloqueEquipo = new StringBuilder();
+            boolean estaElDNI = false;
+
+            while ((linea = br.readLine()) != null) {
+                bloqueEquipo.append(linea).append("\n");
+
+                if (linea.startsWith("Integrantes:")) {
+                    while ((linea = br.readLine()) != null && !linea.startsWith("--------------------------------------------------")) {
+                        bloqueEquipo.append(linea).append("\n");
+                        if (linea.contains(dniUsuario)) {
+                            estaElDNI = true;
+                        }
+                    }
+                    bloqueEquipo.append("--------------------------------------------------\n");
+
+                    if (estaElDNI) {
+                        String bloqueStr = bloqueEquipo.toString();
+                        String nombreEquipo = "";
+                        for (String l : bloqueStr.split("\n")) {
+                            if (l.startsWith("Nombre del equipo: ")) {
+                                nombreEquipo = l.substring(18).trim();
+                                break;
+                            }
+                        }
+                        equipos.add(nombreEquipo);
+                        equiposCompletos.add(bloqueStr);
+                    }
+                    bloqueEquipo.setLength(0);
+                    estaElDNI = false;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer equipos.txt");
+            e.printStackTrace();
+            return;
+        }
+
+        if (equipos.isEmpty()) {
+            System.out.println("No estás en ningún equipo actualmente.");
+            return;
+        }
+
+        /// Paso 3: Mostrar equipos y pedir cuál abandonar
+        System.out.println("Equipos en los que participas:");
+        for (int i = 0; i < equipos.size(); i++) {
+            System.out.println((i + 1) + ". " + equipos.get(i));
+        }
+        System.out.println("Ingrese el número del equipo que desea abandonar (0 para cancelar):");
+
+        int opcion = -1;
+        while (true) {
+            if (sc.hasNextInt()) {
+                opcion = sc.nextInt();
+                sc.nextLine();
+                if (opcion >= 0 && opcion <= equipos.size()) {
+                    break;
+                } else {
+                    System.out.println("Número inválido. Intente nuevamente:");
+                }
+            } else {
+                System.out.println("Por favor ingrese un número válido:");
+                sc.nextLine();
+            }
+        }
+
+        if (opcion == 0) {
+            System.out.println("No abandonaste ningún equipo.");
+            return;
+        }
+
+        /// Paso 4: Modificar equipos.txt quitando el DNI del equipo elegido
+        String equipoABorrar = equiposCompletos.get(opcion - 1);
+        StringBuilder nuevoContenidoEquipo = new StringBuilder();
+        String[] lineas = equipoABorrar.split("\n");
+
+        for (String l : lineas) {
+            if (l.trim().matches("\\d+\\. DNI: " + dniUsuario + "( \\(Capitán\\))?")) {
+                continue; // omitimos línea del DNI a eliminar
+            }
+            nuevoContenidoEquipo.append(l).append("\n");
+        }
+
+        /// Reenumerar integrantes
+        String[] lineasFiltradas = nuevoContenidoEquipo.toString().split("\n");
+        StringBuilder reenumerado = new StringBuilder();
+        int contador = 0;
+        for (String nl : lineasFiltradas) {
+            if (nl.startsWith("  ") && nl.contains("DNI: ")) {
+                contador++;
+                String lineaRenumerada = nl.replaceFirst("\\s*\\d+\\.", "  " + contador + ".");
+                reenumerado.append(lineaRenumerada).append("\n");
+            } else {
+                reenumerado.append(nl).append("\n");
+            }
+        }
+
+        /// Reescribir equipos.txt modificado
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("equipos.txt"))) {
+            for (int i = 0; i < equiposCompletos.size(); i++) {
+                if (i == opcion - 1) {
+                    bw.write(reenumerado.toString());
+                } else {
+                    bw.write(equiposCompletos.get(i));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al guardar equipos.txt");
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println("Has abandonado el equipo: " + equipos.get(opcion - 1));
     }
+
 
     public void registrar() {
         Scanner sc = new Scanner(System.in);
@@ -81,12 +235,40 @@ public abstract class Usuario {
         System.out.println("Apellido:");
         String apellido = sc.nextLine();
 
-        System.out.println("Edad:");
-        int edad = sc.nextInt();
-        sc.nextLine();
+        int edad;
+        while (true) {
+            System.out.println("Edad:");
 
-        System.out.println("Email:");
-        String email = sc.nextLine();
+            if (sc.hasNextInt()) {
+                edad = sc.nextInt();
+                sc.nextLine(); // limpiar el buffer
+
+                if (edad >= 18 && edad <= 99) {
+                    break;
+                } else {
+                    System.out.println("La edad debe estar entre 18 y 99 años.");
+                }
+            } else {
+                System.out.println("Por favor ingrese un número válido.");
+                sc.nextLine(); // descartar entrada inválida
+            }
+        }
+
+        String email;
+        while (true) {
+            System.out.println("Email:");
+            email = sc.nextLine().trim();
+
+            // Validación simple: debe contener '@' y un '.' después del '@'
+            int atPos = email.indexOf('@');
+            int dotPos = email.lastIndexOf('.');
+
+            if (atPos > 0 && dotPos > atPos + 1 && dotPos < email.length() - 1) {
+                break;
+            } else {
+                System.out.println("Email inválido. Por favor, ingresa un email válido.");
+            }
+        }
 
         System.out.println("Password:");
         String password = sc.nextLine();
@@ -95,21 +277,53 @@ public abstract class Usuario {
         int dni = sc.nextInt();
         sc.nextLine();
 
-        System.out.println("Posicion:");
-        String posicion = sc.nextLine();
+        /// Lista de posiciones válidas
+        List<String> posicionesValidas = Arrays.asList("Delantero", "Mediocampista", "Defensor", "Arquero");
 
-        try{
-            FileWriter archivo = new FileWriter("usuarios.txt", true);
-            archivo.write(email + ";" + password + ";" + nombre + ";" + apellido + ";" + edad + ";" + dni + ";" + posicion + "\n");
-            archivo.close();
+        String posicion;
+
+        while (true) {
+            System.out.println("Posición (Delantero, Mediocampista, Defensor, Arquero):");
+            posicion = sc.nextLine().trim();
+
+            /// Validar ignorando mayúsculas/minúsculas
+            String finalPosicion = posicion;
+            boolean posicionValida = posicionesValidas.stream()
+                    .anyMatch(p -> p.equalsIgnoreCase(finalPosicion));
+
+            if (posicionValida) {
+                // igualar minus o mayus
+                for (String p : posicionesValidas) {
+                    if (p.equalsIgnoreCase(posicion)) {
+                        posicion = p;
+                        break;
+                    }
+                }
+                break;
+            } else {
+                System.out.println("Posición inválida. Debes ingresar una de las siguientes: " + String.join(", ", posicionesValidas));
+            }
+        }
+
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
+            writer.write("Email: " + email + "\n");
+            writer.write("Password: " + password + "\n");
+            writer.write("Nombre: " + nombre + "\n");
+            writer.write("Apellido: " + apellido + "\n");
+            writer.write("Edad: " + edad + "\n");
+            writer.write("DNI: " + dni + "\n");
+            writer.write("Posición: " + posicion + "\n");
+            writer.write("--------------------------------------------------\n");
             System.out.println("Usuario guardado");
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error al guardar el archivo");
+            e.printStackTrace();
         }
         sc.close();
     }
 
-    public void login() {
+    public boolean login() {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Ingrese su email: ");
@@ -117,50 +331,36 @@ public abstract class Usuario {
         System.out.print("Ingrese su password: ");
         String passwordIngresado = sc.nextLine();
 
-
         boolean accesoConcedido = false;
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"));
+        try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) {
             String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] partes = linea.split(";");
-                String emailGuardado = partes[0];
-                String passwordGuardado = partes[1];
+            String emailGuardado = "";
+            String passwordGuardado = "";
 
-                if (emailIngresado.equals(emailGuardado) && passwordIngresado.equals(passwordGuardado)) {
-                    accesoConcedido = true;
-                    break;
+            while ((linea = br.readLine()) != null) {
+                if (linea.startsWith("Email: ")) {
+                    emailGuardado = linea.substring(7).trim(); // después de "Email: "
+                } else if (linea.startsWith("Password: ")) {
+                    passwordGuardado = linea.substring(10).trim(); // después de "Password: "
+
+                    // Verificar cuando ya se tienen email y password
+                    if (emailIngresado.equals(emailGuardado) && passwordIngresado.equals(passwordGuardado)) {
+                        accesoConcedido = true;
+                        break;
+                    }
                 }
             }
-            br.close();
-
         } catch (IOException e) {
             System.out.println("Error al leer el archivo.");
         }
+
         if (accesoConcedido) {
             System.out.println("Bienvenido a FutInc");
         } else {
-            System.out.println("Las credenciales son incorrectas, asegurate de introducir bien tu contraseña");
-
+            System.out.println("Las credenciales son incorrectas, asegúrate de introducir bien tu contraseña");
         }
+
+        return accesoConcedido;
     }
-
-    public void elegirRol() {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("PRESIONE 1 PARA CREAR UN EQUIPO, O PRESIONE 2 PARA UNIRSE UN EQUIPO:");
-        int presion1 = sc.nextInt();
-        sc.nextLine();
-
-        if (presion1 == 1) {
-            Capitan rol = new Capitan();
-            rol.crearEquipo();
-        }
-        else if(presion1 == 2){
-
-        }
-        sc.close();
-    }
-
 }
