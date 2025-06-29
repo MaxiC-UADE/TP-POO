@@ -27,6 +27,10 @@ public class Jugador extends Usuario{
 
                 if (nombreEquipoInput.equals(nombreEquipoGuardado)) {
                     partes[4] += "," + this.dni;
+                    int cantidadIntegrantesGuardado = Integer.parseInt(partes[7]);
+                    cantidadIntegrantesGuardado += 1;
+                    String nuevaCantidadIntegrantes = Integer.toString(cantidadIntegrantesGuardado);
+                    partes[7] = nuevaCantidadIntegrantes;
                     writer.write(String.join(",", partes));
                     integranteAñadido = true;
                     continue; // saltar esta línea
