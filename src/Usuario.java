@@ -68,6 +68,9 @@ public abstract class Usuario {
     }
 
 
+
+    public String dniUsuarioLogueado = null;
+
     // METODOS
     public void abandonarEquipo(String emailUsuario) {
         Scanner sc = new Scanner(System.in);
@@ -327,9 +330,9 @@ public abstract class Usuario {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Ingrese su email: ");
-        String emailIngresado = sc.nextLine();
+        String emailIngresado = sc.nextLine().trim();
         System.out.print("Ingrese su password: ");
-        String passwordIngresado = sc.nextLine();
+        String passwordIngresado = sc.nextLine().trim();
 
         boolean accesoConcedido = false;
 
@@ -340,11 +343,10 @@ public abstract class Usuario {
 
             while ((linea = br.readLine()) != null) {
                 if (linea.startsWith("Email: ")) {
-                    emailGuardado = linea.substring(7).trim(); // después de "Email: "
+                    emailGuardado = linea.substring(7).trim();
                 } else if (linea.startsWith("Password: ")) {
-                    passwordGuardado = linea.substring(10).trim(); // después de "Password: "
+                    passwordGuardado = linea.substring(10).trim();
 
-                    // Verificar cuando ya se tienen email y password
                     if (emailIngresado.equals(emailGuardado) && passwordIngresado.equals(passwordGuardado)) {
                         accesoConcedido = true;
                         break;
@@ -355,7 +357,25 @@ public abstract class Usuario {
             System.out.println("Error al leer el archivo.");
         }
 
+        // Si se logueó correctamente, ahora buscamos el DNI con ese email
         if (accesoConcedido) {
+            try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) {
+                String linea;
+                boolean emailEncontrado = false;
+
+                while ((linea = br.readLine()) != null) {
+                    if (linea.startsWith("Email: ")) {
+                        String emailArchivo = linea.substring(7).trim();
+                        emailEncontrado = emailArchivo.equals(emailIngresado);
+                    } else if (emailEncontrado && linea.startsWith("DNI: ")) {
+                        dniUsuarioLogueado = linea.substring(5).trim(); // guardamos el DNI
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Error al buscar el DNI.");
+            }
+
             System.out.println("Bienvenido a FutInc");
         } else {
             System.out.println("Las credenciales son incorrectas, asegúrate de introducir bien tu contraseña");
@@ -363,4 +383,5 @@ public abstract class Usuario {
 
         return accesoConcedido;
     }
+
 }

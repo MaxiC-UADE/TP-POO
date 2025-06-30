@@ -53,7 +53,6 @@ public class Capitan extends Usuario {
             }
         }
 
-
         String numeroIntegrantes;
         while (true) {
             System.out.println("Ingresa la cantidad de integrantes (F5, F7, F8, F11):");
@@ -119,8 +118,23 @@ public class Capitan extends Usuario {
             }
         }
 
-        System.out.println("Preferencias:"); /// PREFERENCIAS HACER BETO O GONZA
-        String preferencias = sc.nextLine();
+        // --- Aquí pedimos la zona y validamos el horario ---
+        System.out.println("Ingrese la zona donde quieren jugar habitualmente:");
+        String zona = sc.nextLine().trim();
+
+        String horario;
+        while (true) {
+            System.out.println("Ingrese un horario cómodo para el equipo (formato 24h HH:mm, ejemplo 18:30):");
+            horario = sc.nextLine().trim();
+
+            if (horario.matches("^([01]\\d|2[0-3]):([0-5]\\d)$")) {
+                break;
+            } else {
+                System.out.println("Formato inválido. Por favor ingrese el horario en formato HH:mm (ejemplo: 18:30).");
+            }
+        }
+
+        String preferencias = "Zona: " + zona + "; Horario: " + horario;
 
         int edadMin, edadMax;
         while (true) {
@@ -189,11 +203,205 @@ public class Capitan extends Usuario {
     }
 
 
-    public void borrarEquipo() {
 
+    public void borrarEquipo() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del equipo que desea borrar: ");
+        String nombreEquipo = sc.nextLine().trim();
+
+        System.out.print("Ingrese su DNI para verificar si es el capitán: ");
+        String dniUsuario = sc.nextLine().trim();
+
+        File archivoOriginal = new File("equipos.txt");
+        File archivoTemporal = new File("equipos_temp.txt");
+
+        boolean equipoEncontrado = false;
+        boolean usuarioEsCapitan = false;
+
+        try (
+                BufferedReader br = new BufferedReader(new FileReader(archivoOriginal));
+                PrintWriter pw = new PrintWriter(new FileWriter(archivoTemporal))
+        ) {
+            String linea;
+            StringBuilder bloqueEquipo = new StringBuilder();
+
+            while ((linea = br.readLine()) != null) {
+                // Si detecta un nuevo equipo por la línea que comienza con ID:
+                if (linea.startsWith("ID:")) {
+                    // Evaluar bloque anterior
+                    if (bloqueEquipo.length() > 0) {
+                        String bloqueStr = bloqueEquipo.toString();
+                        if (bloqueStr.contains("Nombre del equipo: " + nombreEquipo)) {
+                            equipoEncontrado = true;
+                            // Verificar si el DNI aparece como capitán
+                            if (bloqueStr.contains(dniUsuario + " (capitan)")) {
+                                usuarioEsCapitan = true;
+                                // No se escribe este bloque (se elimina)
+                            } else {
+                                // No es el capitán, no eliminar
+                                pw.print(bloqueStr);
+                            }
+                        } else {
+                            pw.print(bloqueStr);
+                        }
+                        bloqueEquipo.setLength(0);
+                    }
+                }
+                bloqueEquipo.append(linea).append(System.lineSeparator());
+            }
+
+            // Evaluar último bloque
+            if (bloqueEquipo.length() > 0) {
+                String bloqueStr = bloqueEquipo.toString();
+                if (bloqueStr.contains("Nombre del equipo: " + nombreEquipo)) {
+                    equipoEncontrado = true;
+                    if (bloqueStr.contains(dniUsuario + " (capitan)")) {
+                        usuarioEsCapitan = true;
+                        // No escribir el bloque
+                    } else {
+                        pw.print(bloqueStr);
+                    }
+                } else {
+                    pw.print(bloqueStr);
+                }
+            }
+
+            // Reemplazar archivo original si corresponde
+            if (archivoOriginal.delete()) {
+                archivoTemporal.renameTo(archivoOriginal);
+            }
+
+            if (!equipoEncontrado) {
+                System.out.println("No se encontró un equipo con ese nombre.");
+            } else if (equipoEncontrado && usuarioEsCapitan) {
+                System.out.println("El equipo \"" + nombreEquipo + "\" fue eliminado exitosamente.");
+            } else {
+                System.out.println("Solo el capitán puede eliminar este equipo.");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Ocurrió un error al procesar el archivo: " + e.getMessage());
+        }
     }
 
     public void inscripcion() {
+        Scanner sc = new Scanner(System.in);
+        List<List<String>> torneos = new ArrayList<>();
 
+        // Leer torneos.txt y separar en bloques
+        try (BufferedReader br = new BufferedReader(new FileReader("torneos.txt"))) {
+            String linea;
+            List<String> bloqueActual = new ArrayList<>();
+
+            while ((linea = br.readLine()) != null) {
+                if (linea.startsWith("-----------------------------")) {
+                    torneos.add(new ArrayList<>(bloqueActual));
+                    bloqueActual.clear();
+                } else {
+                    bloqueActual.add(linea);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer torneos.txt: " + e.getMessage());
+            return;
+        }
+
+        if (torneos.isEmpty()) {
+            System.out.println("No hay torneos disponibles.");
+            return;
+        }
+
+        // Mostrar torneos
+        System.out.println("Torneos disponibles:");
+        for (int i = 0; i < torneos.size(); i++) {
+            String nombre = torneos.get(i).stream()
+                    .filter(l -> l.startsWith("NombreTorneo: "))
+                    .findFirst()
+                    .map(l -> l.substring(14))
+                    .orElse("Torneo sin nombre");
+            System.out.println((i + 1) + ") " + nombre);
+        }
+
+        // Elegir torneo
+        System.out.print("Seleccione un torneo por número: ");
+        int opcion = sc.nextInt();
+        sc.nextLine();
+
+        if (opcion < 1 || opcion > torneos.size()) {
+            System.out.println("Opción inválida.");
+            return;
+        }
+
+        int torneoIndex = opcion - 1;
+        List<String> torneoSeleccionado = torneos.get(torneoIndex);
+
+        System.out.println("\n--- Detalles del Torneo ---");
+        for (String linea : torneoSeleccionado) {
+            System.out.println(linea);
+        }
+
+        // Validar cupo
+        int equiposActuales = 0;
+        int maxEquipos = 0;
+
+        for (String linea : torneoSeleccionado) {
+            if (linea.startsWith("EquipoInscripto: ")) {
+                equiposActuales++;
+            } else if (linea.startsWith("MaxEquipos: ")) {
+                try {
+                    maxEquipos = Integer.parseInt(linea.substring(12).trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: MaxEquipos inválido en el torneo.");
+                    return;
+                }
+            }
+        }
+
+        if (equiposActuales >= maxEquipos) {
+            System.out.println("Este torneo ya alcanzó el máximo de equipos inscriptos (" + maxEquipos + ").");
+            return;
+        }
+
+        // Opciones
+        System.out.println("\n1) Confirmar inscripción");
+        System.out.println("2) Volver atrás");
+        System.out.print("Seleccione una opción: ");
+        int accion = sc.nextInt();
+        sc.nextLine();
+
+        if (accion == 1) {
+            System.out.print("Ingrese el nombre del equipo: ");
+            String nombreEquipo = sc.nextLine().trim();
+
+            // Validar que no esté repetido
+            boolean yaInscripto = torneoSeleccionado.stream()
+                    .anyMatch(l -> l.toLowerCase().equals("equipoincripto: " + nombreEquipo.toLowerCase()));
+
+            if (yaInscripto) {
+                System.out.println("Ese equipo ya está inscripto en este torneo.");
+                return;
+            }
+
+            // Agregar equipo
+            torneoSeleccionado.add("EquipoInscripto: " + nombreEquipo);
+
+            // Guardar archivo completo
+            try (FileWriter fw = new FileWriter("torneos.txt", false)) {
+                for (List<String> torneo : torneos) {
+                    for (String linea : torneo) {
+                        fw.write(linea + "\n");
+                    }
+                    fw.write("-----------------------------\n");
+                }
+                System.out.println("Inscripción confirmada y guardada.");
+            } catch (IOException e) {
+                System.out.println("Error al guardar la inscripción: " + e.getMessage());
+            }
+
+        } else if (accion == 2) {
+            System.out.println("Volviendo al menú principal...");
+        } else {
+            System.out.println("Opción no válida.");
+        }
     }
 }
